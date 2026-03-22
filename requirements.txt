@@ -1,0 +1,5 @@
+pandas
+python-dateutil
+PyMySQL
+SQLAlchemy
+tushare

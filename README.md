@@ -62,16 +62,16 @@ securities_platform/
 │  ├─ config.py
 │  ├─ db.py
 │  ├─ models/
-│  │  ├─ stock.py
-│  │  ├─ trade_calendar.py
-│  │  └─ daily_price.py
+│  │  ├─ stock_model.py
+│  │  ├─ trade_calendar_model.py
+│  │  └─ daily_price_model.py
 │  ├─ collectors/
 │  │  ├─ stock_basic_collector.py
 │  │  ├─ trade_calendar_collector.py
 │  │  └─ daily_price_collector.py
 │  ├─ services/
 │  │  ├─ stock_service.py
-│  │  └─ update_service.py
+│  │  └─ sync_service.py
 │  └─ utils/
 │     ├─ logger.py
 │     └─ date_utils.py
@@ -80,7 +80,8 @@ securities_platform/
 │  ├─ sync_stock_basic.py
 │  ├─ sync_trade_calendar.py
 │  ├─ backfill_daily_price.py
-│  └─ update_daily_price.py
+│  ├─ sync_daily_price.py
+│  └─ run_daily_sync.py
 ├─ requirements.txt
 └─ README.md
 ```
@@ -99,9 +100,9 @@ securities_platform/
 
 定义数据表对应的模型结构，作为数据库层的核心对象。
 
-- `stock.py`：股票基础信息模型
-- `trade_calendar.py`：交易日历模型
-- `daily_price.py`：日线行情模型
+- `stock_model.py`：股票基础信息模型
+- `trade_calendar_model.py`：交易日历模型
+- `daily_price_model.py`：日线行情模型
 
 #### `app/collectors/`
 
@@ -116,7 +117,7 @@ securities_platform/
 承接业务逻辑，负责协调采集层、模型层和接口层。
 
 - `stock_service.py`：股票数据查询、筛选与业务逻辑
-- `update_service.py`：统一执行同步、增量更新、任务编排
+- `sync_service.py`：统一执行同步、增量更新、任务编排
 
 #### `app/utils/`
 
@@ -166,7 +167,7 @@ securities_platform/
 ### 6.3 日线行情流程
 
 1. 执行 `scripts/backfill_daily_price.py` 回补历史行情
-2. 执行 `scripts/update_daily_price.py` 做日常增量更新
+2. 执行 `scripts/sync_daily_price.py` 做日常增量更新
 3. 调用 `daily_price_collector.py` 获取行情数据
 4. 使用 Pandas 做字段标准化与数据去重
 5. 写入 `daily_price` 表
@@ -318,7 +319,7 @@ docs: update technical design
 1. 完成 MySQL 表结构设计与初始化脚本
 2. 完成配置管理、数据库连接和日志模块
 3. 完成三个 collector 的基础版本
-4. 完成同步脚本与 update service
+4. 完成同步脚本与 sync service
 5. 验证数据链路稳定性
 6. 再接入 FastAPI 接口
 7. 最后建设 FineBI 看板和 AI 增强模块
@@ -340,3 +341,50 @@ Docker + AI API / 本地模型
 ```
 
 这套方案兼顾了开发效率、落地速度、后期扩展性与部署稳定性，适合作为证券数据平台的第一版技术实现方案。
+
+## 15. 当前已打通的首条数据链路
+
+当前项目已补齐“从 Tushare 导入当前沪深300成分股最近三年日线行情”的最小可用链路。
+
+使用前请准备：
+
+1. 设置 `TUSHARE_TOKEN`
+2. 可选设置 `DATABASE_URL`
+
+如果未设置 `DATABASE_URL`，项目默认会写入根目录下的 `securities_platform.db`。
+
+初始化数据库：
+
+```bash
+python scripts/init_db.py
+```
+
+导入当前沪深300成分股最近三年日线：
+
+```bash
+python scripts/backfill_daily_price.py --years 3
+```
+
+刷新最近几天的沪深300日线：
+
+```bash
+python scripts/sync_daily_price.py --lookback-days 10
+```
+
+导入当前沪深300成分股最近三年复权因子：
+
+```bash
+python scripts/backfill_adj_factor.py --years 3
+```
+
+导入最近三年的交易日历：
+
+```bash
+python scripts/sync_trade_calendar.py --years 3
+```
+
+MySQL 建表 SQL 已另存为：
+
+```text
+scripts/sql/mysql_schema.sql
+```
