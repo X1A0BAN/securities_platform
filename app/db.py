@@ -38,7 +38,7 @@ def session_scope():
 
 
 def init_db() -> None:
-    # Import models here so SQLAlchemy registers all metadata before create_all.
+    # 这里集中导入模型，确保 create_all 之前 SQLAlchemy 已经完成表元数据注册。
     import app.models.adj_factor_model  # noqa: F401
     import app.models.daily_price_model  # noqa: F401
     import app.models.stock_model  # noqa: F401

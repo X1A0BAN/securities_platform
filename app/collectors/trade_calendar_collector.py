@@ -23,7 +23,7 @@ class TushareTradeCalendarCollector:
         self.token = token or settings.tushare_token
         if not self.token:
             raise ValueError(
-                "Missing TUSHARE_TOKEN. Set the environment variable or pass --token to the script."
+                "缺少 TUSHARE_TOKEN。请设置环境变量，或在脚本里通过 --token 传入。"
             )
 
         self.pro = ts.pro_api(self.token)

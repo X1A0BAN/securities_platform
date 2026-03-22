@@ -15,7 +15,7 @@ from app.db import init_db
 def main() -> None:
     settings = get_settings()
     init_db()
-    print(f"Database initialized: {settings.database_url}")
+    print(f"数据库初始化完成：{settings.database_url}")
 
 
 if __name__ == "__main__":
