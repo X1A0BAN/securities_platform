@@ -1,3 +1,4 @@
+# 用途：执行主板股票基础数据、交易日历、行情和复权因子的全量同步流程。
 from __future__ import annotations
 
 import argparse

@@ -1,3 +1,4 @@
+# 用途：执行主板股票的每日增量同步流程。
 from __future__ import annotations
 
 import argparse

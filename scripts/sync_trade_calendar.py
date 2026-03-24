@@ -1,3 +1,4 @@
+# 用途：同步交易日历数据到数据库。
 from __future__ import annotations
 
 import argparse

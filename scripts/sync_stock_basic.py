@@ -1,3 +1,4 @@
+# 用途：同步主板股票基础信息到数据库。
 from __future__ import annotations
 
 import argparse

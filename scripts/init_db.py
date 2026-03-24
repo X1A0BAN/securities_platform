@@ -1,3 +1,4 @@
+# 用途：初始化项目数据库表结构。
 from __future__ import annotations
 
 import sys

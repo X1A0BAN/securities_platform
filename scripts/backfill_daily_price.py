@@ -1,3 +1,4 @@
+# 用途：从 Tushare 回补主板股票历史日线行情数据到数据库。
 from __future__ import annotations
 
 import argparse
